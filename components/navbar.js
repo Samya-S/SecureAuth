@@ -3,24 +3,28 @@ import Link from 'next/link'
 import { MdOutlineLockPerson } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const Navbar = () => {
     const router = useRouter();
     const [user, setuser] = useState({ value: null });
     const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
-        
+    const [token, setToken] = useLocalStorage(null);
+
     useEffect(() => {
         const token = localStorage.getItem("token")
         // console.log(token)
         if (token) {
             setuser({ value: token })
+            setToken(token)
             // router.push(`${hostingDomain}/`) /* work pending regarding updating navbar when user logs in */
         }
     }, [])
-    
+
     const logOut = () => {
         localStorage.removeItem("token")
         setuser({ value: null })
+        setToken(null)
         router.push(`${hostingDomain}/login`)
     }
 

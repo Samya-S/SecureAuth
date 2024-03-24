@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 // import axios from "axios";
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const Login = () => {
     const router = useRouter();
@@ -11,11 +12,13 @@ const Login = () => {
         email: "",
         password: "",
     })
+    const [token, setToken] = useLocalStorage(null);
     const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
 
     useEffect(() => {
         // if you are signed in, redirect login -> dashboard
         if(localStorage.getItem("token")){
+            setToken(localStorage.getItem("token"))
             router.push(`${hostingDomain}/dashboard`)
         }
     })
@@ -46,6 +49,7 @@ const Login = () => {
                 if (typeof window !== 'undefined') {
                     localStorage.setItem('token', response.token); // saves jwt token in local storage to keep track of loggedin session
                 }
+                setToken(response.token);
                 router.push(`${hostingDomain}/dashboard`)
             }
             else{
