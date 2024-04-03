@@ -1,17 +1,14 @@
 "use client"
-import styles from './updatedetails.module.css';
 import { useEffect, useState, useContext } from 'react';
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../authContext";
+import styles from './updatedetails.module.css';
 
 const UpdateDetails = () => {
     const router = useRouter();
-    const { userToken } = useContext(AuthContext);
-    const [updateduser, setupdateduser] = useState({
-        username: "",
-        email: "",
-    })
-    const [updatedpassword, setupdatedpassword] = useState('')
+    const { userToken, userData, setUserData } = useContext(AuthContext);
+    const [updateduser, setupdateduser] = useState(userData);
+    const [updatedpassword, setupdatedpassword] = useState('');
     const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
 
     useEffect(() => {
@@ -20,6 +17,10 @@ const UpdateDetails = () => {
             router.push(`${hostingDomain}/login`)
         }
     }, [userToken])
+
+    useEffect(() => {
+        setUserData(updateduser);
+    }, [updateduser]);
 
     const updateUserDetails = async (field) => {
         const resp = await fetch(`${hostingDomain}/api/updateuser`, {
