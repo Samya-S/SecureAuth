@@ -13,10 +13,10 @@ export async function POST(req) {
 
         // Verify and decode the token using the secret key
         const decodedToken = jwt.verify(token, process.env.secretToken);
-        
+
         // find the user in db and update
         const user = await User.findOneAndUpdate(
-            { _id: decodedToken.id }, // fining user using id
+            { _id: decodedToken.id }, // finding user using id
             { username: updateduser.username, email: updateduser.email }, // updating data with new ones
             { new: true } // to return the updated data
         )

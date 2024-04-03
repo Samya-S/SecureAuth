@@ -21,7 +21,7 @@ const UpdateDetails = () => {
         }
     }, [userToken])
 
-    const updateUserDetails = async () => {
+    const updateUserDetails = async (field) => {
         const resp = await fetch(`${hostingDomain}/api/updateuser`, {
             method: 'POST', // or 'PUT'
             headers: {
@@ -30,17 +30,17 @@ const UpdateDetails = () => {
             body: JSON.stringify({
                 // Retrieve the token from the context
                 token: userToken.value,
-                updateduser: updateduser
+                updateduser: { [field]: updateduser[field] }
             })
         });
         const user = await resp.json()
-    	console.log(user)
-        alert("dn")
-        setuserdata({ username: user.username, email: user.email })
+        // console.log(user)
+        alert("Details updated successfully!")
+        setupdateduser({ username: user.username, email: user.email })
     }
 
     const updatePassword = async () => {
-        console.log("updatedpassword: " + updatedpassword)
+        // console.log("updatedpassword: " + updatedpassword)
         const resp = await fetch(`${hostingDomain}/api/updatepassword`, {
             method: 'POST', // or 'PUT'
             headers: {
@@ -68,7 +68,7 @@ const UpdateDetails = () => {
             <div className={'text-center shadow-md flex flex-col gap-3 max-w-md w-11/12 ' + styles.updatedetailscontainer}>
                 <p className="text-3xl">Update your details</p>
                 <p className="text-xl">Change your username and email</p>
-                <form className={'flex flex-col justify-center items-center gap-6 pt-4'} onSubmit={updateUserDetails}>
+                <div className={'flex flex-col justify-center items-center gap-6 pt-4'}>
                     <div className={styles.mb3 + ' w-full'}>
                         <label htmlFor="username" className={styles.formlabel}>Enter your new username:</label>
                         <input
@@ -82,6 +82,7 @@ const UpdateDetails = () => {
                             required
                         />
                     </div>
+                    <button onClick={() => updateUserDetails('username')} className={styles.submitbtn + ' mb-4 py-2 px-5 rounded-full shadow-lg hover:shadow'}>Update Username</button>
                     <div className={styles.mb3 + ' w-full'}>
                         <label htmlFor="email" className={styles.formlabel}>Enter your new email address:</label>
                         <input
@@ -96,8 +97,8 @@ const UpdateDetails = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className={styles.submitbtn + ' mb-4 py-2 px-5 rounded-full shadow-lg hover:shadow'}>Submit</button>
-                </form>
+                    <button onClick={() => updateUserDetails('email')} className={styles.submitbtn + ' mb-4 py-2 px-5 rounded-full shadow-lg hover:shadow'}>Update Email</button>
+                </div>
                 <p className="text-xl">Change your password</p>
                 <form className={'flex flex-col justify-center items-center gap-6 pt-4'} onSubmit={updatePassword}>
                     <div className={styles.mb3 + ' w-full'}>
@@ -113,7 +114,7 @@ const UpdateDetails = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className={styles.submitbtn + ' mb-4 py-2 px-5 rounded-full shadow-lg hover:shadow'}>Submit</button>
+                    <button type="submit" className={styles.submitbtn + ' mb-4 py-2 px-5 rounded-full shadow-lg hover:shadow'}>Update Password</button>
                 </form>
             </div>
         </div>
