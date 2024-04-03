@@ -1,6 +1,6 @@
 # SecureAuth
 
-SecureAuth - Security Made Simple, Authentication Made Strong made with `NextJS` (frontend and backend) and `MongDB` (database)
+SecureAuth - Security Made Simple, Authentication Made Strong made with `NextJS` (frontend and backend) and `MongoDB` (database)
 
 ## Table of Contents
 
