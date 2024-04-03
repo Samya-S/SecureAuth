@@ -1,58 +1,29 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useEffect, useContext } from 'react'
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
+import { AuthContext } from '../authContext';
 
 const Dashboard = () => {
 	const router = useRouter();
-	const [userdata, setuserdata] = useState({
-		username: "",
-		email: "",
-	})
+	const { userToken, userData } = useContext(AuthContext);
 	const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
 
 	useEffect(() => {
 		// if you are logged out, redirect dashboard -> sign in
-		if (!localStorage.getItem("token")) {
+		if (!userToken) {
 			router.push(`${hostingDomain}/login`)
 		}
-	})
-
-	// getuserdetails function to fetch user from '/api/getuser' and set the state
-	const getUserDetails = async () => {
-		try {
-			const resp = await fetch(`${hostingDomain}/api/getuser`, {
-				method: 'POST', // or 'PUT'
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					// Retrieve the token from the local storage
-					token: localStorage.getItem("token")
-				})
-			});
-			const user = await resp.json()
-			console.log(user)
-			setuserdata(user)
-		}
-		catch (error) {
-			console.log("Error: (status", error.status, ") ", error.message);
-		}
-	}
-
-	useEffect(() => {
-        getUserDetails()
-    }, []) // Empty dependency array means this effect will only run once, when the component mounts
+	}, [userToken])
 
 	return (
 		<div className='p-10'>
 			<p>Dashboard</p>
-			{/* <button onClick={getUserDetails} className={''}>getUserDetails</button> */}
-			<p>Username: {userdata.username}</p>
-			<p>Email: {userdata.email}</p>
+			<p>Username: {userData.username}</p>
+			<p>Email: {userData.email}</p>
 			<Link href={'/updatedetails'}>Update</Link>
 		</div>
 	)
 }
 
-export default Dashboard
+export default Dashboard;

@@ -1,59 +1,33 @@
 "use client"
 import styles from './login.module.css';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useRouter } from "next/navigation";
-// import axios from "axios";
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { AuthContext } from '../authContext';
 
 const Login = () => {
     const router = useRouter();
+    const { userToken, login } = useContext(AuthContext);
     const [user, setUser] = useState({
         email: "",
         password: "",
     })
-    const [token, setToken] = useLocalStorage(null);
     const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
 
     useEffect(() => {
         // if you are signed in, redirect login -> dashboard
-        if(localStorage.getItem("token")){
-            setToken(localStorage.getItem("token"))
+        // if(userToken && typeof window !== 'undefined' && window.location.pathname.includes('/login')){
+        if (userToken) {
             router.push(`${hostingDomain}/dashboard`)
         }
-    })
+    }, [userToken])
 
     const onLogin = async (e) => {
+        e.preventDefault()
         try {
-            e.preventDefault() // prevents page reload while submitting
-
-            // const response = await axios.post("/api/login", user);
-            const resp = await fetch(`${hostingDomain}/api/login`, {
-                method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
-            const response = await resp.json()
-            // console.log(response)
-            if (!response.error){
-                // alert(response.message) // for (response.success) = T/F
-            }
-            else {
-                console.log(response)
-                alert("Some server error occured! Please try again later")
-            }
-
-            if (response.success) { // successful login
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem('token', response.token); // saves jwt token in local storage to keep track of loggedin session
-                }
-                setToken(response.token);
-                router.push(`${hostingDomain}/dashboard`)
-            }
-            else{
-                alert(response.message)
+            const response = await login(user);
+            if (response.success) {
+                router.push(`${hostingDomain}/dashboard`);
             }
         }
         catch (error) {

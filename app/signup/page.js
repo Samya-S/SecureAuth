@@ -1,12 +1,13 @@
 "use client"
 import styles from './signup.module.css'
 import Link from 'next/link'
-// import axios from "axios";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useRouter } from "next/navigation";
+import { AuthContext } from '../authContext';
 
 const SignUp = () => {
     const router = useRouter();
+    const { signUp, userToken } = useContext(AuthContext);
     const [user, setUser] = useState({
         email: "",
         password: "",
@@ -16,27 +17,16 @@ const SignUp = () => {
 
     useEffect(() => {
         // if you are signed in, redirect signup -> dashboard
-        if(localStorage.getItem("token")){
+        if(userToken){
             router.push(`${hostingDomain}/dashboard`)
         }
-    })
+    }, [userToken])
 
     const onSignup = async (e) => {
+        e.preventDefault() // prevents page reload while submitting
         try {
-            e.preventDefault() // prevents page reload while submitting
-
-            // const response = await axios.post("/api/signup", user);
-            const resp = await fetch(`${hostingDomain}/api/signup`, {
-                method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
-            const response = await resp.json()
+            await signUp(user);
             alert("Congrats! your account has been created. Now you can sign in to your account.")
-            // console.log(response)
-            
             router.push(`${hostingDomain}/login`);
         }
         catch (error) {
@@ -98,4 +88,4 @@ const SignUp = () => {
     )
 }
 
-export default SignUp
+export default SignUp;

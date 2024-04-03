@@ -1,30 +1,28 @@
 "use client"
 import Link from 'next/link'
 import { MdOutlineLockPerson } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { AuthContext } from "../app/authContext";
 
 const Navbar = () => {
     const router = useRouter();
-    const [user, setuser] = useState({ value: null });
+    const { userToken, setUserToken } = useContext(AuthContext);
+    // const [user, setuser] = useState({ value: null });
     const hostingDomain = process.env.NEXT_PUBLIC_hostingDomain
-    const [token, setToken] = useLocalStorage(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token")
-        // console.log(token)
-        if (token) {
-            setuser({ value: token })
-            setToken(token)
-            // router.push(`${hostingDomain}/`) /* work pending regarding updating navbar when user logs in */
-        }
-    }, [])
+        
+    // useEffect(() => {
+    //     // const token = localStorage.getItem("token")
+    //     // console.log(token)
+    //     if (userToken) {
+    //         // setuser({ value: token })
+    //         // router.push(`${hostingDomain}/`) /* work pending regarding updating navbar when user logs in */
+    //     }
+    // }, [userToken])
 
     const logOut = () => {
         localStorage.removeItem("token")
-        setuser({ value: null })
-        setToken(null)
+        setUserToken(null)
         router.push(`${hostingDomain}/login`)
     }
 
@@ -38,10 +36,10 @@ const Navbar = () => {
                     </Link>
                 </p>
                 <nav className="md:mr-7 md:ml-auto flex flex-wrap items-center text-base justify-center">
-                    {!user.value && (<Link href={'/login'} className="mx-3 hover:text-gray-900">Login</Link>)}
-                    {!user.value && (<Link href={'/signup'} className="mx-3 hover:text-gray-900">Sign up</Link>)}
-                    {user.value && (<Link href={'/dashboard'} className="mx-3 hover:text-gray-900">Dashboard</Link>)}
-                    {user.value && (<a onClick={logOut} className="mx-3 hover:text-gray-900 cursor-pointer">Log out</a>)}
+                    {!userToken && (<Link href={'/login'} className="mx-3 hover:text-gray-900">Login</Link>)}
+                    {!userToken && (<Link href={'/signup'} className="mx-3 hover:text-gray-900">Sign up</Link>)}
+                    {userToken && (<Link href={'/dashboard'} className="mx-3 hover:text-gray-900">Dashboard</Link>)}
+                    {userToken && (<a onClick={logOut} className="mx-3 hover:text-gray-900 cursor-pointer">Log out</a>)}
                 </nav>
             </div>
         </header>
